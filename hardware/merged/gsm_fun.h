@@ -8,8 +8,8 @@
 #define FONA_TX      4                                                  // SIM800 TX
 #define FONA_RST     5                                                  // SIM800 RST
 
-#define measurePin  = A0          // Dust sensor voltage output
-#define ledPower    = 10          // dust sensor pwm led pin
+#define measurePin   A0          // Dust sensor voltage output
+#define ledPower     10          // dust sensor pwm led pin
 
 NeoSWSerial modem (FONA_TX, FONA_RX);                                   // setup 
                                                                         // NeoSWSerial for SIM800
@@ -17,7 +17,7 @@ Adafruit_FONA ada_fona =        Adafruit_FONA(FONA_RST);                // creat
 Adafruit_SI1145 uv = Adafruit_SI1145();
 
 // end of definitions
-// ******************************************************************************************************************************************************
+// **********************************1********************************************************************************************************************
 /* flush softWareSerial */
 void flush_FONA() {
   char inChar;
