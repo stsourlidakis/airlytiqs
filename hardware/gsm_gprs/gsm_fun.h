@@ -2,7 +2,7 @@
 #include "Adafruit_FONA.h"
 // ******************************************************************************************************************************************************
 // pins & variables declaration
-#define FONA_RX      2                                                  // SIM800 RX
+#define FONA_RX      3                                                  // SIM800 RX
 #define FONA_TX      4                                                  // SIM800 TX
 #define FONA_RST     5                                                  // SIM800 RST
 NeoSWSerial modem (FONA_TX, FONA_RX);                                   // setup 

@@ -1,3 +1,6 @@
+Added support for NeoSWSerial; SoftwareSerial blocks interrupts
+
+
 Adafruit_FONA_Library
 =====================
 
