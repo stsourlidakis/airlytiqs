@@ -1,0 +1,25 @@
+{
+  "name": "airlytiqs-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Crowdhackathon-SmartCity2/airlytiqs.git"
+  },
+  "author": "Stavros Tsourlidakis <s.tsourlidakis@hotmail.com> (https://stsourlidakis.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Crowdhackathon-SmartCity2/airlytiqs/issues"
+  },
+  "homepage": "https://github.com/Crowdhackathon-SmartCity2/airlytiqs#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "pg-promise": "^8.4.4"
+  }
+}
