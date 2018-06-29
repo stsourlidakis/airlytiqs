@@ -2,9 +2,32 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+app.use(bodyParser.text());
+
+const db = require('./lib/db.js');
 
 app.get('/', async function(req, res, next){
 	res.send('Hey');
+});
+
+app.get('/telemetry', async function(req, res, next){
+	try{
+		const telemetry = await db.readTelemetry();
+		res.json(telemetry);
+	}
+	catch(e) {
+		next(e);
+	}
+});
+
+app.post('/telemetry', async function(req, res, next){
+	try{
+		await db.writeTelemetry(req.body);
+		res.status(201).send('ok');
+	}
+	catch(e) {
+		next(e);
+	}
 });
 
 //default error handling
