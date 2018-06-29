@@ -1,0 +1,42 @@
+html {
+	box-sizing: border-box;
+	font-family: Roboto, Helvetica;
+	font-weight: 900;
+	text-shadow: 0 2px 0 rgba(0, 0, 0, 0.07);
+	height: 100%;
+}
+
+*,
+*:before,
+*:after {
+	box-sizing: inherit;
+}
+
+body {
+	margin: 10px 70px;
+	height: 95%;
+	background-color: #5068c8;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg %3E%3Cpolygon fill='%236d7fc7' points='800 100 0 200 0 800 1600 800 1600 200'/%3E%3Cpolygon fill='%238895c8' points='800 200 0 400 0 800 1600 800 1600 400'/%3E%3Cpolygon fill='%23a0a9cc' points='800 300 0 600 0 800 1600 800 1600 600'/%3E%3Cpolygon fill='%23b7bcd1' points='1600 800 800 400 0 800'/%3E%3Cpolygon fill='%23cbced9' points='1280 800 800 500 320 800'/%3E%3Cpolygon fill='%23dedfe2' points='533.3 800 1066.7 800 800 600'/%3E%3Cpolygon fill='%23eeeeee' points='684.1 800 914.3 800 800 700'/%3E%3C/g%3E%3C/svg%3E");
+	background-attachment: fixed;
+	background-size: cover;
+	background-position: center;
+}
+
+.container{
+	height: 100%;
+	display: grid;
+	grid-gap: 10px;
+	grid-template-rows: 1fr 15fr;
+	color: #eee;
+}
+
+.header{
+	border-bottom: 5px solid gray;
+}
+
+.content{
+	display: grid;
+	grid-gap: 10px;
+	grid-template-columns: 2fr 1fr;
+	grid-template-rows: 1fr;
+}
