@@ -6,11 +6,18 @@ const heatMapLayer = new ol.layer.Heatmap({
 	source: createDummyData(),
 	radius: 50,
 	blur: 10,
-	opacity: 0.5
+	opacity: 1,
 });
 
+const raster = new ol.layer.Tile({
+	source: new ol.source.Stamen ({
+		layer: 'toner-lite'
+	})
+});
+
+
 const map = new ol.Map({
-	layers: [osmLayer, heatMapLayer],
+	layers: [raster, heatMapLayer],
 	target: "mapWrapper",
 	view: new ol.View({
 		center: ol.proj.transform([ 23.69318, 37.94187 ], 'EPSG:4326', 'EPSG:3857'),
