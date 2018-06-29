@@ -1,24 +1,26 @@
+let heatmapLayers = [];
+let activeLayer;
+let colors = {
+	'Dust': ['Black', 'DarkRed', 'Yellow', 'White'],
+	'UV/IR': ['Black', 'Purple', 'Red', 'Yellow', 'White'],
+	'CO': ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
+	'CO2': ['blue', 'red']
+};
+
 const osmLayer = new ol.layer.Tile({
 	source: new ol.source.OSM()
-});
-
-const heatMapLayer = new ol.layer.Heatmap({
-	source: createDummyData(),
-	radius: 50,
-	blur: 10,
-	opacity: 1,
-	maxResolution: 8
 });
 
 const raster = new ol.layer.Tile({
 	source: new ol.source.Stamen ({
 		layer: 'toner-lite'
-	})
+	}),
+	name: 'base layer'
 });
 
 
 const map = new ol.Map({
-	layers: [raster, heatMapLayer],
+	layers: [raster],
 	target: "mapWrapper",
 	view: new ol.View({
 		center: ol.proj.transform([ 23.69318, 37.94187 ], 'EPSG:4326', 'EPSG:3857'),
@@ -28,8 +30,9 @@ const map = new ol.Map({
 
 function simulate(){
 	setInterval(function(){
-		heatMapLayer.setSource(createDummyData())
-	}, 700);
+		delete heatmapLayers[activeLayer];
+		renderLayer(activeLayer);
+	}, 500);
 }
 
 function createDummyData(){
@@ -57,4 +60,45 @@ function getRandomFloat() {
 	const min = 0;
 	const max = 0.45;
 	return Math.random() * (max - min) + min;
+	// return .25
+}
+
+document.querySelector('#controlsWrapper').addEventListener('change', function(e){
+	const layer = e.target.options[e.target.selectedIndex].value;
+	if( layer!==activeLayer ){
+		renderLayer(layer);
+	}
+});
+
+function renderLayer(layer){
+	createLayerIfNeeded(layer);
+	removeActiveHeatmapLayer();
+	addLayer(layer);
+	activeLayer = layer;
+}
+
+function createLayerIfNeeded(layer){
+	if(typeof heatmapLayers[layer]=='undefined'){
+		heatmapLayers[layer] = createLayer(layer);
+	}
+}
+
+function removeActiveHeatmapLayer(){
+	map.removeLayer(map.getLayers().array_[1]);
+}
+
+function addLayer(layer){
+	map.addLayer(heatmapLayers[layer]);
+}
+
+function createLayer(layer){
+	return new ol.layer.Heatmap({
+		name: layer,
+		source: createDummyData(),
+		radius: 50,
+		blur: 10,
+		opacity: 1,
+		maxResolution: 8,
+		gradient: colors[layer]
+	});
 }
