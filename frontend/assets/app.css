@@ -25,12 +25,8 @@ body {
 	height: 100%;
 	display: grid;
 	grid-gap: 10px;
-	grid-template-rows: 1fr 15fr;
+	grid-template-rows: 1fr;
 	color: #eee;
-}
-
-.header{
-	border-bottom: 5px solid gray;
 }
 
 .content{
