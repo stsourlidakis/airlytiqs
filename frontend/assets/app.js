@@ -7,6 +7,7 @@ const heatMapLayer = new ol.layer.Heatmap({
 	radius: 50,
 	blur: 10,
 	opacity: 1,
+	maxResolution: 8
 });
 
 const raster = new ol.layer.Tile({
