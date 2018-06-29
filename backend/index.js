@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -6,9 +7,7 @@ app.use(bodyParser.text());
 
 const db = require('./lib/db.js');
 
-app.get('/', async function(req, res, next){
-	res.send('Hey');
-});
+app.use(express.static('../frontend'));
 
 app.get('/telemetry', async function(req, res, next){
 	try{
