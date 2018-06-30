@@ -32,15 +32,24 @@ body {
 .content{
 	display: grid;
 	grid-gap: 10px;
-	grid-template-columns: 9fr 1fr;
+	grid-template-columns: 3fr 1fr;
 	grid-template-rows: 1fr;
 }
 
-#controlsWrapper{
-	padding: 5px 10px;
+#sideBar{
+	display: grid;
+	grid-gap: 10px;
+	grid-template-rows: 11fr 9fr;
+	padding: 5px 1px;
 	background: rgba(155, 155, 155,.2);
+	justify-content: center;
 }
 
-#controlsWrapper select{
-	width: 100%;
+#sideBar select{
+	margin-top: 5px;
+	width: 40%;
+}
+
+#dropdowns{
+	text-align: center;
 }

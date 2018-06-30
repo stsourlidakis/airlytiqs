@@ -4,25 +4,37 @@
 	<meta charset="UTF-8">
 	<title>AirLytiQs</title>
 	<link rel="stylesheet" href="https://openlayers.org/en/v5.0.0/css/ol.css" type="text/css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 	<link rel="stylesheet" href="assets/app.css">
 </head>
 <body>
 	<div class="container">
 		<div class="content">
 			<div id="mapWrapper"></div>
-			<div id="controlsWrapper">
-				<div class="select-style">
-					<select id="layer">
+			<div id="sideBar">
+				<div class="controls">
+					<input type="text" id="datepicker" value="Select a date" hidden>
+					<div id="dropdowns">
+					<select id="timeRange" autocomplete="off">
+						<option value="Morning">Morning</option>
+						<option value="Noon">Noon</option>
+						<option value="Evening">Evening</option>
+						<option value="Night">Night</option>
+					</select>
+					<select id="layer" autocomplete="off">
 						<option value="Dust">Dust</option>
 						<option value="UV/IR">UV/IR</option>
-						<option value="CO">CO</option>
+						<option value="CO" selected>CO</option>
 						<option value="CO2">CO2</option>
 					</select>
+					</div>
 				</div>
+				<div id="chart"></div>
 			</div>
 		</div>
 	</div>
-	<script src="https://openlayers.org/en/v5.0.0/build/ol.js" type="text/javascript"></script>	
+	<script src="https://openlayers.org/en/v5.0.0/build/ol.js" type="text/javascript"></script>
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 	<script src="assets/data.js"></script>
 	<script src="assets/app.js"></script>
 </body>

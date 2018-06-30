@@ -1,3 +1,11 @@
+flatpickr("#datepicker", {
+	defaultDate: 'today',
+	maxDate: 'today',
+	inline: 'true',
+	locale:{
+		"firstDayOfWeek": 1
+	}
+});
 let heatmapLayers = [];
 let activeLayer;
 let colors = {
@@ -65,7 +73,7 @@ function getRandomFloat() {
 	// return .25
 }
 
-document.querySelector('#controlsWrapper').addEventListener('change', function(e){
+document.querySelector('#layer').addEventListener('change', function(e){
 	const layer = e.target.options[e.target.selectedIndex].value;
 	if( layer!==activeLayer ){
 		renderLayer(layer);
@@ -103,4 +111,13 @@ function createLayer(layer){
 		maxResolution: 50,
 		gradient: colors[layer]
 	});
+}
+
+// debug
+let simulating = false;
+document.body.onkeyup = function (e) {
+	if(e.which===16 && !simulating){
+		simulate();
+		simulating = true;
+	}
 }
