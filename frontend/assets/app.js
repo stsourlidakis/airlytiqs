@@ -47,7 +47,7 @@ const map = new ol.Map({
 renderLayer('CO');
 
 function simulate(){
-	setInterval(function(){
+	return setInterval(function(){
 		delete heatmapLayers[activeLayer];
 		renderLayer(activeLayer);
 	}, 500);
@@ -139,9 +139,14 @@ function createLayer(layer){
 
 // debug
 let simulating = false;
+let simId;
 document.body.onkeyup = function (e) {
-	if(e.which===16 && !simulating){
-		simulate();
-		simulating = true;
+	if(e.which===16){
+		if(simulating){
+			clearInterval(simId);
+		} else {
+			simId = simulate();
+		}
+		simulating = !simulating;
 	}
 }
