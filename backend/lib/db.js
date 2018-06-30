@@ -8,10 +8,10 @@ const cn = {
 };
 const db = pgp(cn);
 
-module.exports.writeTelemetry = function(val){
-	return db.none('INSERT INTO telemetry(val) VALUES($1)', [val]);
+module.exports.writeTelemetry = function(raw, uvRad, irRad, visRad, uvIndex, dustRaw, dustIndex, coRaw, coIndex){
+	return db.none('INSERT INTO telemetry("raw", "uvRad", "irRad", "visRad", "uvIndex", "dustRaw", "dustIndex", "coRaw", "coIndex") VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)', [raw, uvRad, irRad, visRad, uvIndex, dustRaw, dustIndex, coRaw, coIndex]);
 }
 
 module.exports.readTelemetry = function(){
-	return db.any("SELECT id, val, created at time zone 'utc' at time zone 'Europe/Athens' as created FROM telemetry");
+	return db.any('SELECT * FROM telemetry');
 }
