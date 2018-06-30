@@ -1,22 +1,6 @@
-flatpickr("#datepicker", {
-	defaultDate: 'today',
-	maxDate: 'today',
-	inline: 'true',
-	locale:{
-		"firstDayOfWeek": 1
-	},
-	onChange: function(selectedDates, dateStr, instance){
-		randomizeHeatmap();
-	}
-});
 let heatmapLayers = [];
+const initialHeatmapLayer = 'co';
 let activeLayer, activeStamenLayer;
-let colors = {
-	'Dust': ['Black', 'DarkRed', 'Yellow', 'White'],
-	'UV/IR': ['Black', 'Purple', 'Red', 'Yellow', 'White'],
-	'CO': ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
-	'CO2': ['blue', 'red']
-};
 let stamenLayersForTimeOfTheDay = {
 	'default': 'toner-lite',
 	'Morning': 'toner-lite',
@@ -24,8 +8,14 @@ let stamenLayersForTimeOfTheDay = {
 	'Evening': 'toner',
 	'Night': 'toner'
 };
-
+let colors = {
+	'dust': ['Black', 'DarkRed', 'Yellow', 'White'],
+	'uv': ['Black', 'Purple', 'Red', 'Yellow', 'White'],
+	'co': ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
+	'co2': ['blue', 'red']
+};
 const defaultMapCenter = { lon: 37.9553645, lat: 23.7401097};
+
 const osmLayer = new ol.layer.Tile({
 	source: new ol.source.OSM()
 });
@@ -37,7 +27,6 @@ const raster = new ol.layer.Tile({
 	name: 'base layer'
 });
 
-
 const map = new ol.Map({
 	layers: [raster],
 	target: "mapWrapper",
@@ -47,29 +36,40 @@ const map = new ol.Map({
 	})
 });
 
-renderLayer('CO');
-
-function simulate(){
-	return setInterval(function(){
-		randomizeHeatmap();
-	}, 500);
+function renderHeatmapLayer(layerName){
+	createLayerIfNeeded(layerName);
+	removeActiveHeatmapLayer();
+	map.addLayer(heatmapLayers[layerName]);
+	activeLayer = layerName;
 }
 
-function randomizeHeatmap(){
-	delete heatmapLayers[activeLayer];
-	renderLayer(activeLayer);
+function createLayerIfNeeded(layerName){
+	if(typeof heatmapLayers[layerName]=='undefined'){
+		heatmapLayers[layerName] = createLayer(layerName);
+	}
 }
 
-function createDummyData(){
-	var data = new ol.source.Vector();
+function getData(layerName){
+	let data = new ol.source.Vector();
 	let temp;
-
-	for(point of route){
-		temp = featureFromLonLat(point.lat, point.lon, getRandomFloat());
+	for(point of route[layerName]){
+		temp = featureFromLonLat(point.lat, point.lon, point.w);
 		data.addFeature(temp);
 	}
 
 	return data;
+}
+
+function createLayer(layerName){
+	return new ol.layer.Heatmap({
+		name: layerName,
+		source: getData(layerName),
+		radius: 30,
+		blur: 10,
+		opacity: 1,
+		maxResolution: 50,
+		gradient: colors[layerName]
+	});
 }
 
 function featureFromLonLat(lon, lat, weight) {
@@ -81,27 +81,9 @@ function featureFromLonLat(lon, lat, weight) {
 	});
 }
 
-function getRandomFloat() {
-	const min = 0;
-	const max = 0.45;
-	return Math.random() * (max - min) + min;
-	// return .25
+function removeActiveHeatmapLayer(){
+	map.removeLayer(map.getLayers().array_[1]);
 }
-
-document.querySelector('#layer').addEventListener('change', function(e){
-	const layer = e.target.options[e.target.selectedIndex].value;
-	if( layer!==activeLayer ){
-		renderLayer(layer);
-		randomizeHeatmap();
-	}
-});
-
-document.querySelector('#timeRange').addEventListener('change', function(e){
-	const timeOfTheDay = e.target.options[e.target.selectedIndex].value;
-	const newStamenLayer = stamenLayersForTimeOfTheDay[timeOfTheDay] || stamenLayersForTimeOfTheDay.default;
-	updateStamenLayer(newStamenLayer);
-	randomizeHeatmap();
-});
 
 function updateStamenLayer(stamenLayer){
 	if(stamenLayer!==activeStamenLayer){
@@ -112,49 +94,31 @@ function updateStamenLayer(stamenLayer){
 	}
 }
 
-function renderLayer(layer){
-	createLayerIfNeeded(layer);
-	removeActiveHeatmapLayer();
-	addLayer(layer);
-	activeLayer = layer;
-}
-
-function createLayerIfNeeded(layer){
-	if(typeof heatmapLayers[layer]=='undefined'){
-		heatmapLayers[layer] = createLayer(layer);
-	}
-}
-
-function removeActiveHeatmapLayer(){
-	map.removeLayer(map.getLayers().array_[1]);
-}
-
-function addLayer(layer){
-	map.addLayer(heatmapLayers[layer]);
-}
-
-function createLayer(layer){
-	return new ol.layer.Heatmap({
-		name: layer,
-		source: createDummyData(),
-		radius: 50,
-		blur: 10,
-		opacity: 1,
-		maxResolution: 50,
-		gradient: colors[layer]
+function initDatepicker(){
+	flatpickr("#datepicker", {
+		defaultDate: 'today',
+		maxDate: 'today',
+		inline: 'true',
+		locale:{
+			"firstDayOfWeek": 1
+		},
+		onChange: function(selectedDates, dateStr, instance){
+			// update heatmap
+		}
 	});
 }
 
-// debug
-let simulating = false;
-let simId;
-document.body.onkeyup = function (e) {
-	if(e.which===16){
-		if(simulating){
-			clearInterval(simId);
-		} else {
-			simId = simulate();
+function addEventListeners(){
+	document.querySelector('#layer').addEventListener('change', function(e){
+		const layerName = e.target.options[e.target.selectedIndex].value;
+		if( layerName!==activeLayer ){
+			renderHeatmapLayer(layerName);
 		}
-		simulating = !simulating;
-	}
+	});
+
+	document.querySelector('#timeRange').addEventListener('change', function(e){
+		const timeOfTheDay = e.target.options[e.target.selectedIndex].value;
+		const newStamenLayer = stamenLayersForTimeOfTheDay[timeOfTheDay] || stamenLayersForTimeOfTheDay.default;
+		updateStamenLayer(newStamenLayer);
+	});
 }
