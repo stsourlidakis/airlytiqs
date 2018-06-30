@@ -36,6 +36,20 @@ void flush_FONA() { /* flush NeoSWSerial */
   }
 }
 
+bool pack_and_flush(char *buffer, char *packet, int var) { /* pack int and flush buffer */
+  itoa(var, buffer, 10);
+  strcat(packet, buffer);
+  buffer[0] = (char) 0;
+  return 1;
+}
+
+bool pack_and_flush(char *buffer, char *packet, float var) { /* pack float and flush buffer */
+  dtostrf(var, 10, 4, buffer);
+  strcat(packet, buffer);
+  buffer[0] = (char) 0;
+  return 1;
+}
+
 void flush_serial() { /* clear the UART */
   while (Serial.available())
     Serial.read();
@@ -46,20 +60,6 @@ char get_net_stat() { /* get network status from provider */
   Serial.print(nn);
   Serial.print(F(": "));
   return nn; // 1 is home registerd, 5 is roaming registerd
-}
-
-bool pack_and_flush(int var, char *buffer, char *packet) { /* pack int and flush buffer */
-  itoa(var, buffer, 10);
-  strcat(packet, buffer);
-  buffer[0] = (char) 0;
-  return 1;
-}
-
-bool pack_and_flush(float var, char *buffer, char *packet) { /* pack float and flush buffer */
-  dtostrf(var, 10, 4, buffer);
-  strcat(packet, buffer);
-  buffer[0] = (char) 0;
-  return 1;
 }
 
 bool http_post(uint8_t* url, uint8_t* packet) { /* HTTP POST */ // UDR0 is fukin fast
@@ -94,17 +94,15 @@ bool http_post(uint8_t* url, uint8_t* packet) { /* HTTP POST */ // UDR0 is fukin
   return postOK;
 }
 
-float dust_measure(int samplingTime, byte deltaTime, int sleepTime) { /* measure dust */
-  static int voMeasured;
-  static float calcVoltage;
-  digitalWrite(ledPower, LOW);                // LED OFF
+float dust_measure() { /* measure dust */
+  digitalWrite(ledPower, LOW);                // LED ON
   delayMicroseconds(samplingTime);
   voMeasured = analogRead(measurePin);        // ADC value
   delayMicroseconds(deltaTime);
   digitalWrite(ledPower, HIGH);               // LED ON
   delayMicroseconds(sleepTime);
   calcVoltage = voMeasured * (5.0 / 1024);
-  float dustDensity = (0.17 * calcVoltage - 0.1) * 1000; // Chris Nafis (c) 2012
+  dustDensity = (0.17 * calcVoltage - 0.1) * 1000; // Chris Nafis (c) 2012
   return dustDensity;
 }
 
