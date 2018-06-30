@@ -1,8 +1,8 @@
 // libraries
-#include <NeoSWSerial.h>
-#include "Adafruit_FONA.h"
 #include <Wire.h>
 #include "Adafruit_SI1145.h"
+#include <NeoSWSerial.h>
+#include "Adafruit_FONA.h"
 // end of libraries
 // ******************************************************************************************************************************************************
 
@@ -27,6 +27,43 @@ Adafruit_FONA ada_fona = Adafruit_FONA(FONA_RST);// create modem
 Adafruit_SI1145 uv = Adafruit_SI1145();          // create uv sensor
 
 // Function declaration
+bool pack_and_flush(int var, char *buffer, char *packet) { /* pack int and flush buffer */
+  itoa(var, buffer, 10);
+  //for (byte i=0; i<20; i++) Serial.print(buffer[i]);
+  strcat(packet, buffer);
+  strcat(packet, ",");
+  buffer[0] = (char) 0;
+  return 1;
+}
+
+bool pack_and_flush(float var, char *buffer, char *packet) { /* pack float and flush buffer */
+  dtostrf(var, 10, 4, buffer);
+  strcat(packet, buffer);
+  //for (byte i=0; i<20; i++) Serial.print(buffer[i]);
+  strcat(packet, ",");
+  buffer[0] = (char) 0;
+  return 1;
+}
+
+float dust_measure(int samplingTime, byte deltaTime, int sleepTime) { /* measure dust */
+  static int voMeasured;
+  static float calcVoltage;
+  digitalWrite(ledPower, LOW);                // LED OFF
+  delayMicroseconds(samplingTime);
+  voMeasured = analogRead(measurePin);        // ADC value
+  delayMicroseconds(deltaTime);
+  digitalWrite(ledPower, HIGH);               // LED ON
+  delayMicroseconds(sleepTime);
+  calcVoltage = voMeasured * (5.0 / 1024);
+  float dustDensity = (0.17 * calcVoltage - 0.1) * 1000; // Chris Nafis (c) 2012
+  return dustDensity;
+}
+
+int CO_ppm(double rawValue){ /* Calculate CO PPM */
+    double ppm = 3.027*exp(1.0698*(rawValue*3.3/4095));
+    return ppm;
+}
+
 void flush_FONA() { /* flush NeoSWSerial */
   char inChar;
   while (modem.available()) {
@@ -46,20 +83,6 @@ char get_net_stat() { /* get network status from provider */
   Serial.print(nn);
   Serial.print(F(": "));
   return nn; // 1 is home registerd, 5 is roaming registerd
-}
-
-bool pack_and_flush(int var, char *buffer, char *packet) { /* pack int and flush buffer */
-  itoa(var, buffer, 10);
-  strcat(packet, buffer);
-  buffer[0] = (char) 0;
-  return 1;
-}
-
-bool pack_and_flush(float var, char *buffer, char *packet) { /* pack float and flush buffer */
-  dtostrf(var, 10, 4, buffer);
-  strcat(packet, buffer);
-  buffer[0] = (char) 0;
-  return 1;
 }
 
 bool http_post(uint8_t* url, uint8_t* packet) { /* HTTP POST */ // UDR0 is fukin fast
@@ -93,21 +116,6 @@ bool http_post(uint8_t* url, uint8_t* packet) { /* HTTP POST */ // UDR0 is fukin
   ada_fona.HTTP_POST_end();
   return postOK;
 }
-
-float dust_measure(int samplingTime, byte deltaTime, int sleepTime) { /* measure dust */
-  static int voMeasured;
-  static float calcVoltage;
-  digitalWrite(ledPower, LOW);                // LED OFF
-  delayMicroseconds(samplingTime);
-  voMeasured = analogRead(measurePin);        // ADC value
-  delayMicroseconds(deltaTime);
-  digitalWrite(ledPower, HIGH);               // LED ON
-  delayMicroseconds(sleepTime);
-  calcVoltage = voMeasured * (5.0 / 1024);
-  float dustDensity = (0.17 * calcVoltage - 0.1) * 1000; // Chris Nafis (c) 2012
-  return dustDensity;
-}
-
 // end of function declaration
 // ******************************************************************************************************************************************************
 
