@@ -1,3 +1,4 @@
+const socket = io('http://airlytiqs.cloudapp.net');
 let heatmapLayers = [];
 const initialHeatmapLayer = 'co';
 let activeHeatmapLayer, activeStamenLayer;
@@ -44,9 +45,7 @@ function renderHeatmapLayer(layerName){
 }
 
 function createLayerIfNeeded(layerName){
-	if(typeof heatmapLayers[layerName]=='undefined'){
-		heatmapLayers[layerName] = createLayer(layerName);
-	}
+	heatmapLayers[layerName] = createLayer(layerName);
 }
 
 function getData(layerName){
@@ -94,6 +93,13 @@ function updateStamenLayer(stamenLayer){
 	}
 }
 
+function updateData(values){
+	const availableLayers = Object.keys(values);
+	for(layerName of availableLayers){
+		route[layerName][0].w = values[layerName];
+	}
+}
+
 function initDatepicker(){
 	flatpickr("#datepicker", {
 		defaultDate: 'today',
@@ -109,6 +115,11 @@ function initDatepicker(){
 }
 
 function addEventListeners(){
+	socket.on('telemetry', function (data) {
+		updateData(data.values);
+		renderHeatmapLayer(activeHeatmapLayer);
+	});
+
 	document.querySelector('#layer').addEventListener('change', function(e){
 		const layerName = e.target.options[e.target.selectedIndex].value;
 		if( layerName!==activeHeatmapLayer ){
