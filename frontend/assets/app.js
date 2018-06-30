@@ -7,13 +7,21 @@ flatpickr("#datepicker", {
 	}
 });
 let heatmapLayers = [];
-let activeLayer;
+let activeLayer, activeStamenLayer;
 let colors = {
 	'Dust': ['Black', 'DarkRed', 'Yellow', 'White'],
 	'UV/IR': ['Black', 'Purple', 'Red', 'Yellow', 'White'],
 	'CO': ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
 	'CO2': ['blue', 'red']
 };
+let stamenLayersForTimeOfTheDay = {
+	'default': 'toner-lite',
+	'Morning': 'toner-lite',
+	'Noon': 'toner-lite',
+	'Evening': 'toner',
+	'Night': 'toner'
+};
+
 const defaultMapCenter = { lon: 37.9553645, lat: 23.7401097};
 const osmLayer = new ol.layer.Tile({
 	source: new ol.source.OSM()
@@ -21,7 +29,7 @@ const osmLayer = new ol.layer.Tile({
 
 const raster = new ol.layer.Tile({
 	source: new ol.source.Stamen ({
-		layer: 'toner-lite'
+		layer: stamenLayersForTimeOfTheDay.default
 	}),
 	name: 'base layer'
 });
@@ -79,6 +87,22 @@ document.querySelector('#layer').addEventListener('change', function(e){
 		renderLayer(layer);
 	}
 });
+
+document.querySelector('#timeRange').addEventListener('change', function(e){
+	const timeOfTheDay = e.target.options[e.target.selectedIndex].value;
+	const newStamenLayer = stamenLayersForTimeOfTheDay[timeOfTheDay] || stamenLayersForTimeOfTheDay.default;
+	updateStamenLayer(newStamenLayer);
+
+});
+
+function updateStamenLayer(stamenLayer){
+	if(stamenLayer!==activeStamenLayer){
+		map.getLayers().array_[0].setSource(new ol.source.Stamen ({
+			layer: stamenLayer
+		}));
+		activeStamenLayer = stamenLayer;
+	}
+}
 
 function renderLayer(layer){
 	createLayerIfNeeded(layer);
