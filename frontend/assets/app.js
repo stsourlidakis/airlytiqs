@@ -6,7 +6,7 @@ let colors = {
 	'CO': ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
 	'CO2': ['blue', 'red']
 };
-
+const defaultMapCenter = { lon: 37.9553645, lat: 23.7401097};
 const osmLayer = new ol.layer.Tile({
 	source: new ol.source.OSM()
 });
@@ -23,10 +23,12 @@ const map = new ol.Map({
 	layers: [raster],
 	target: "mapWrapper",
 	view: new ol.View({
-		center: ol.proj.transform([ 23.69318, 37.94187 ], 'EPSG:4326', 'EPSG:3857'),
-		zoom: 16
+		center: ol.proj.transform([ defaultMapCenter.lat, defaultMapCenter.lon ], 'EPSG:4326', 'EPSG:3857'),
+		zoom: 13
 	})
 });
+
+renderLayer('CO');
 
 function simulate(){
 	setInterval(function(){
@@ -98,7 +100,7 @@ function createLayer(layer){
 		radius: 50,
 		blur: 10,
 		opacity: 1,
-		maxResolution: 8,
+		maxResolution: 50,
 		gradient: colors[layer]
 	});
 }
