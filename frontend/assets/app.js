@@ -4,6 +4,9 @@ flatpickr("#datepicker", {
 	inline: 'true',
 	locale:{
 		"firstDayOfWeek": 1
+	},
+	onChange: function(selectedDates, dateStr, instance){
+		randomizeHeatmap();
 	}
 });
 let heatmapLayers = [];
@@ -48,9 +51,13 @@ renderLayer('CO');
 
 function simulate(){
 	return setInterval(function(){
-		delete heatmapLayers[activeLayer];
-		renderLayer(activeLayer);
+		randomizeHeatmap();
 	}, 500);
+}
+
+function randomizeHeatmap(){
+	delete heatmapLayers[activeLayer];
+	renderLayer(activeLayer);
 }
 
 function createDummyData(){
@@ -85,6 +92,7 @@ document.querySelector('#layer').addEventListener('change', function(e){
 	const layer = e.target.options[e.target.selectedIndex].value;
 	if( layer!==activeLayer ){
 		renderLayer(layer);
+		randomizeHeatmap();
 	}
 });
 
@@ -92,7 +100,7 @@ document.querySelector('#timeRange').addEventListener('change', function(e){
 	const timeOfTheDay = e.target.options[e.target.selectedIndex].value;
 	const newStamenLayer = stamenLayersForTimeOfTheDay[timeOfTheDay] || stamenLayersForTimeOfTheDay.default;
 	updateStamenLayer(newStamenLayer);
-
+	randomizeHeatmap();
 });
 
 function updateStamenLayer(stamenLayer){
