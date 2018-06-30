@@ -97,6 +97,9 @@ function updateData(values){
 	const availableLayers = Object.keys(values);
 	for(layerName of availableLayers){
 		route[layerName][0].w = values[layerName];
+		let series = getSeriesByName(layerName);
+		console.log(series.name);
+		series.points[series.points.length-1].update(Number(values[layerName]));
 	}
 }
 
@@ -116,6 +119,7 @@ function initDatepicker(){
 
 function addEventListeners(){
 	socket.on('telemetry', function (data) {
+		console.log(data.values);
 		updateData(data.values);
 		renderHeatmapLayer(activeHeatmapLayer);
 	});
@@ -132,4 +136,74 @@ function addEventListeners(){
 		const newStamenLayer = stamenLayersForTimeOfTheDay[timeOfTheDay] || stamenLayersForTimeOfTheDay.default;
 		updateStamenLayer(newStamenLayer);
 	});
+}
+
+let chartSeries = createSeries();
+let chartInstance;
+function initChart(){
+	chartInstance = Highcharts.chart('chart', {
+		chart: {
+			type: 'line'
+		},
+		title: {
+			text: 'Hourly Metrics: Faliro 1'
+		},
+		xAxis: {
+			categories: createHourLabels()
+		},
+		yAxis: {
+			title: {
+				text: ''
+			},
+			labels: {
+				formatter: function () {
+					return '';
+				}
+			}
+		},
+		plotOptions: {
+			line: {
+				dataLabels: {
+					enabled: true
+				},
+				enableMouseTracking: true
+			}
+		},
+		series: chartSeries
+	});
+}
+
+function createSeries(){
+	let series = [];
+	for(item of history){
+		series.push({
+			name: item.name,
+			data: item.values,
+			color: item.color
+		});
+	}
+
+	return series;
+}
+
+function createHourLabels(){
+	const currentHour = (new Date()).getHours();
+	let arr = [];
+	arr.push((currentHour-6)+':00');
+	arr.push((currentHour-5)+':00');
+	arr.push((currentHour-4)+':00');
+	arr.push((currentHour-3)+':00');
+	arr.push((currentHour-2)+':00');
+	arr.push((currentHour-1)+':00');
+	arr.push((currentHour)+':00');
+
+	return arr;
+}
+
+function getSeriesByName(name){
+	for(series of chartInstance.series){
+		if(series.name === name){
+			return series;
+		}
+	}
 }
