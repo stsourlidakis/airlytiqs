@@ -1,6 +1,6 @@
 let heatmapLayers = [];
 const initialHeatmapLayer = 'co';
-let activeLayer, activeStamenLayer;
+let activeHeatmapLayer, activeStamenLayer;
 let stamenLayersForTimeOfTheDay = {
 	'default': 'toner-lite',
 	'Morning': 'toner-lite',
@@ -40,7 +40,7 @@ function renderHeatmapLayer(layerName){
 	createLayerIfNeeded(layerName);
 	removeActiveHeatmapLayer();
 	map.addLayer(heatmapLayers[layerName]);
-	activeLayer = layerName;
+	activeHeatmapLayer = layerName;
 }
 
 function createLayerIfNeeded(layerName){
@@ -111,7 +111,7 @@ function initDatepicker(){
 function addEventListeners(){
 	document.querySelector('#layer').addEventListener('change', function(e){
 		const layerName = e.target.options[e.target.selectedIndex].value;
-		if( layerName!==activeLayer ){
+		if( layerName!==activeHeatmapLayer ){
 			renderHeatmapLayer(layerName);
 		}
 	});
