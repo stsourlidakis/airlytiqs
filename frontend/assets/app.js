@@ -12,8 +12,7 @@ let stamenLayersForTimeOfTheDay = {
 let colors = {
 	'dust': ['Black', 'DarkRed', 'Yellow', 'White'],
 	'uv': ['Black', 'Purple', 'Red', 'Yellow', 'White'],
-	'co': ['#00f', '#0ff', '#0f0', '#ff0', '#f00'],
-	'co2': ['blue', 'red']
+	'co': ['#00f', '#0ff', '#0f0', '#ff0', '#f00']
 };
 const defaultMapCenter = { lon: 37.9553645, lat: 23.7401097};
 
