@@ -29,7 +29,7 @@ const raster = new ol.layer.Tile({
 
 const map = new ol.Map({
 	layers: [raster],
-	target: "mapWrapper",
+	target: "map",
 	view: new ol.View({
 		center: ol.proj.transform([ defaultMapCenter.lat, defaultMapCenter.lon ], 'EPSG:4326', 'EPSG:3857'),
 		zoom: 13
@@ -42,6 +42,7 @@ function renderHeatmapLayer(layerName, randomize=false){
 	removeActiveHeatmapLayer();
 	map.addLayer(heatmapLayers[layerName]);
 	activeHeatmapLayer = layerName;
+	styleMapLegend();
 }
 
 function formatData(dataset){
@@ -224,4 +225,21 @@ function getRandomizedValues(layerName){
 	}
 
 	return newData;
+}
+
+function styleMapLegend(){
+	let el = document.querySelector('#mapLegend');
+	let bgStr = 'linear-gradient(to right, ';
+	for(cl of colors[activeHeatmapLayer]){
+		bgStr += ` ${cl},`;
+	}
+	bgStr = bgStr.replace(/,\s*$/, ")");	//replace last comma with closing )
+	el.style.background = bgStr;
+	if(activeHeatmapLayer!=='co'){
+		el.querySelector('#legendLeft').style.color = colors[activeHeatmapLayer][colors[activeHeatmapLayer].length-1];
+		el.querySelector('#legendRight').style.color = colors[activeHeatmapLayer][0];
+	} else {
+		el.querySelector('#legendLeft').style.color = 'white';
+		el.querySelector('#legendRight').style.color = 'white';
+	}
 }

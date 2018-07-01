@@ -36,6 +36,16 @@ body {
 	grid-template-rows: 1fr;
 }
 
+#mapWrapper{
+	display: grid;
+	grid-template-rows: 29fr 1fr;
+}
+
+#mapLegend{
+	display: flex; 
+	justify-content: space-between;
+}
+
 #sideBar{
 	display: grid;
 	grid-gap: 10px;
