@@ -103,7 +103,6 @@ function updateData(values){
 function initDatepicker(){
 	flatpickr("#datepicker", {
 		defaultDate: 'today',
-		maxDate: 'today',
 		inline: 'true',
 		locale:{
 			"firstDayOfWeek": 1
