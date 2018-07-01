@@ -242,3 +242,23 @@ function styleMapLegend(){
 		el.querySelector('#legendRight').style.color = 'white';
 	}
 }
+
+function simulate(){
+	return setInterval(function(){
+		renderHeatmapLayer(activeHeatmapLayer, true);
+	}, 500);
+}
+
+// debug
+let simulating = false;
+let simId;
+document.body.onkeyup = function (e) {
+	if(e.which===49){	//1
+		if(simulating){
+			clearInterval(simId);
+		} else {
+			simId = simulate();
+		}
+		simulating = !simulating;
+	}
+}
