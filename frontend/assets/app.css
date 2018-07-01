@@ -39,7 +39,16 @@ body {
 
 #mapWrapper{
 	display: grid;
-	grid-template-rows: 29fr 1fr;
+	grid-template-rows: 1fr 28fr 1fr;
+}
+
+#mapHeader{
+	display: flex;
+	justify-content: space-between;
+}
+
+.orange{
+	color: #f5818e;
 }
 
 #mapLegend{
