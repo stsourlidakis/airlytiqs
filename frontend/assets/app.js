@@ -36,17 +36,18 @@ const map = new ol.Map({
 	})
 });
 
-function renderHeatmapLayer(layerName){
-	heatmapLayers[layerName] = createLayer(layerName);
+function renderHeatmapLayer(layerName, randomize=false){
+	const data = formatData(randomize ? getRandomizedValues(layerName) : route[layerName]);
+	heatmapLayers[layerName] = createLayer(layerName, data);
 	removeActiveHeatmapLayer();
 	map.addLayer(heatmapLayers[layerName]);
 	activeHeatmapLayer = layerName;
 }
 
-function getData(layerName){
+function formatData(dataset){
 	let data = new ol.source.Vector();
 	let temp;
-	for(point of route[layerName]){
+	for(point of dataset){
 		temp = featureFromLonLat(point.lat, point.lon, point.w);
 		data.addFeature(temp);
 	}
@@ -54,10 +55,10 @@ function getData(layerName){
 	return data;
 }
 
-function createLayer(layerName){
+function createLayer(layerName, data){
 	return new ol.layer.Heatmap({
 		name: layerName,
-		source: getData(layerName),
+		source: data,
 		radius: 30,
 		blur: 10,
 		opacity: 1,
@@ -107,7 +108,8 @@ function initDatepicker(){
 			"firstDayOfWeek": 1
 		},
 		onChange: function(selectedDates, dateStr, instance){
-			// update heatmap
+			const currentDaySelected = selectedDates[0].setHours(0,0,0,0) === new Date().setHours(0,0,0,0);
+			renderHeatmapLayer(activeHeatmapLayer, !currentDaySelected);
 		}
 	});
 }
@@ -130,6 +132,7 @@ function addEventListeners(){
 		const timeOfTheDay = e.target.options[e.target.selectedIndex].value;
 		const newStamenLayer = stamenLayersForTimeOfTheDay[timeOfTheDay] || stamenLayersForTimeOfTheDay.default;
 		updateStamenLayer(newStamenLayer);
+		renderHeatmapLayer(activeHeatmapLayer, true);
 	});
 }
 
@@ -201,4 +204,24 @@ function getSeriesByName(name){
 			return series;
 		}
 	}
+}
+
+function getRandomizedValues(layerName){
+	let newData = [];
+
+	for(point of route[layerName]){
+		let newW = point.w;
+
+		if(Math.random()>0.5){
+			newW += Math.random()<0.5 ? 0.2 : -0.2;
+		}
+
+		newData.push({
+			lat: point.lat,
+			lon: point.lon,
+			w: newW
+		});
+	}
+
+	return newData;
 }
