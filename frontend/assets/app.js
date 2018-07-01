@@ -1,6 +1,6 @@
 const socket = io('http://airlytiqs.cloudapp.net');
 let heatmapLayers = [];
-const initialHeatmapLayer = 'co';
+const initialHeatmapLayer = 'dust';
 let activeHeatmapLayer, activeStamenLayer;
 let stamenLayersForTimeOfTheDay = {
 	'default': 'toner-lite',
