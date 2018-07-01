@@ -98,8 +98,8 @@ function updateData(values){
 	for(layerName of availableLayers){
 		route[layerName][0].w = values[layerName];
 		let series = getSeriesByName(layerName);
-		console.log(series.name);
-		series.points[series.points.length-1].update(Number(values[layerName]));
+		const val = Number(values[layerName]);
+		series.points[series.points.length-1].update(layerName!=='dust' ? val : val*10);
 	}
 }
 
