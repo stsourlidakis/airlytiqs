@@ -37,14 +37,10 @@ const map = new ol.Map({
 });
 
 function renderHeatmapLayer(layerName){
-	createLayerIfNeeded(layerName);
+	heatmapLayers[layerName] = createLayer(layerName);
 	removeActiveHeatmapLayer();
 	map.addLayer(heatmapLayers[layerName]);
 	activeHeatmapLayer = layerName;
-}
-
-function createLayerIfNeeded(layerName){
-	heatmapLayers[layerName] = createLayer(layerName);
 }
 
 function getData(layerName){
