@@ -6,7 +6,9 @@ function getDataForClient(values){
 	return {
 		timestamp: values.timestamp,
 		values: {
-			dust: normalizeDustIndex(values.dustIndex)
+			dust: normalizeDustIndex(values.dustIndex),
+			uv: values.uvIndex,
+			co: values.coIndex
 		}
 	}
 }
