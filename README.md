@@ -3,6 +3,14 @@
 Developed during [#CityChallenge crowdhackathon by Crowdpolicy](http://crowdhackathon.com/smartcity2/en/).
 The system measures various environmental parameters and sends them via GPRS to an endpoint, from where data is collected, stored, analyzed and presented in a simple webapp in -mostly- graphical form.
 
+## Screenshots
+### Dust
+![Dust screenshot](https://i.imgur.com/aRavPqx.png)
+### UV
+![UV screenshot](https://i.imgur.com/h6K1RF8.png)
+### CO
+![CO screenshot](https://i.imgur.com/sStVStz.png)
+
 ## Tech
 ### Software
 * Database: [PostgreSQL](https://www.postgresql.org/)
